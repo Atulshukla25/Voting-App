@@ -17,13 +17,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import LottieAnimation from "../components/LottieAnimation";
+import VotingLiveModal from "../components/VotingLiveModal";
 import socket from "../socket";
 import { FaChessKing } from "react-icons/fa";
-const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
+const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 const token = localStorage.getItem("token");
-
-
-
 
 const positions = [
   "President",
@@ -60,14 +58,11 @@ const Dashboard = () => {
     };
 
     try {
-      const res = await axios.post(
-        `${API_BASE_URL}/votes/vote`,
-        payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.post(`${API_BASE_URL}/votes/vote`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setOpen(false);
       setVoteSuccess(true);
     } catch (error) {
@@ -148,7 +143,9 @@ const Dashboard = () => {
             >
               <div className="w-[50%] flex items-center h-[100%]">
                 <img
-                  src={`${import.meta.env.VITE_APP_BASE_URL}${candidate?.image}`}
+                  src={`${import.meta.env.VITE_APP_BASE_URL}${
+                    candidate?.image
+                  }`}
                   alt=""
                   className="w-[100px] h-[100px] rounded-[50%]"
                 />
@@ -237,7 +234,9 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={`${import.meta.env.VITE_APP_BASE_URL}${candidate?.image}`}
+                      src={`${import.meta.env.VITE_APP_BASE_URL}${
+                        candidate?.image
+                      }`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full"
                     />
@@ -256,7 +255,7 @@ const Dashboard = () => {
                     onClick={() => handleVote(candidate._id)}
                     sx={{
                       background: "#41122e",
-                      fontSize: { xs: "10px", sm: "12px"}, // small on xs/sm, default on md+
+                      fontSize: { xs: "10px", sm: "12px" }, // small on xs/sm, default on md+
                       px: { xs: 1, sm: 2, md: 4 },
                       py: { xs: 0.5, sm: 1, md: 1.5 }, // optional
                     }}
@@ -305,6 +304,7 @@ const Dashboard = () => {
             </div>
           </Box>
         </Modal>
+        <VotingLiveModal open={votingActive} />
       </section>
     </div>
   );
