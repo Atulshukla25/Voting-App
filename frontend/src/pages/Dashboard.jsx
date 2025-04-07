@@ -10,7 +10,7 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
-import { GrUserAdmin } from "react-icons/gr";
+import { axiosInstance } from "../store/index";
 import useStore from "../store/index";
 import { FaGraduationCap } from "react-icons/fa6";
 import axios from "axios";
@@ -58,11 +58,10 @@ const Dashboard = () => {
     };
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/votes/vote`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axiosInstance.post(
+        `${API_BASE_URL}/votes/vote`,
+        payload
+      );
       setOpen(false);
       setVoteSuccess(true);
     } catch (error) {
