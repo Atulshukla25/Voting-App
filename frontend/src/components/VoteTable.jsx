@@ -4,20 +4,17 @@ import axios from "axios";
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 const adminToken = localStorage.getItem("adminToken");
+import { axiosInstance } from "../store/index";
 
-
-
-const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
+const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 
 const VoteTable = () => {
   const [votes, setVotes] = useState([]);
 
   const fetchVotes = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/votes/vote` ,{
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
+      const res = await axiosInstance.get(`${API_BASE_URL}/votes/vote`, {
+        isAdmin: true,
       });
       const formattedVotes = res.data.votes.map((vote) => ({
         id: vote._id,
@@ -36,7 +33,7 @@ const VoteTable = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this vote?")) {
       try {
-        await axios.delete(`${API_BASE_URL}/votes/vote/${id}`,{
+        await axios.delete(`${API_BASE_URL}/votes/vote/${id}`, {
           headers: {
             Authorization: `Bearer ${adminToken}`,
           },
@@ -63,10 +60,7 @@ const VoteTable = () => {
       field: "actions",
       headerName: "Actions",
       renderCell: (params) => (
-        <IconButton
-          color="error"
-          onClick={() => handleDelete(params.row.id)}
-        >
+        <IconButton color="error" onClick={() => handleDelete(params.row.id)}>
           <DeleteIcon />
         </IconButton>
       ),

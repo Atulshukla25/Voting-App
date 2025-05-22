@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, Box, TextField, Button, Typography, MenuItem } from "@mui/material";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  MenuItem,
+} from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import useStore from "../store/index";
@@ -11,11 +18,31 @@ import { BsDoorOpenFill } from "react-icons/bs";
 
 // Validation Schema using Zod
 const validationSchema = z.object({
-  name: z.string().nonempty({ message: "Name is required." }),
-  party: z.string().nonempty({ message: "Party is required." }),
-  department: z.string().nonempty({ message: "Department is required." }),
+  name: z
+    .string()
+    .nonempty("Candidate  name is required")
+    .min(3, "Candidate name must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Candidate name cannot be only numbers",
+    }),
+  party: z
+    .string()
+    .nonempty("Party is required")
+    .min(3, "Party name must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Party cannot be only numbers",
+    }),
+  department: z
+    .string()
+    .nonempty("Department  name is required")
+    .min(3, "Department name must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Department name cannot be only numbers",
+    }),
   position: z.string().nonempty({ message: "Position is required." }),
-  image: z.any().refine((file) => file !== null, { message: "Image is required." }),
+  image: z
+    .any()
+    .refine((file) => file !== null, { message: "Image is required." }),
 });
 
 const AddCandidateModal = ({ open, handleClose }) => {
@@ -78,7 +105,11 @@ const AddCandidateModal = ({ open, handleClose }) => {
   };
 
   return (
-    <Modal open={open} onClose={handleClose} aria-labelledby="add-candidate-modal">
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="add-candidate-modal"
+    >
       <Box
         sx={{
           position: "absolute",
@@ -171,7 +202,9 @@ const AddCandidateModal = ({ open, handleClose }) => {
                 >
                   <MenuItem value="President">President</MenuItem>
                   <MenuItem value="Vice President">Vice President</MenuItem>
-                  <MenuItem value="General Secretary">General Secretary</MenuItem>
+                  <MenuItem value="General Secretary">
+                    General Secretary
+                  </MenuItem>
                   <MenuItem value="Joint Secretary">Joint Secretary</MenuItem>
                   <MenuItem value="Treasurer">Treasurer</MenuItem>
                 </TextField>

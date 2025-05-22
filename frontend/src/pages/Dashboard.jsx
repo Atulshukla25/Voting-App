@@ -10,16 +10,18 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
-import { axiosInstance } from "../store/index";
+import { GrUserAdmin } from "react-icons/gr";
 import useStore from "../store/index";
 import { FaGraduationCap } from "react-icons/fa6";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import LottieAnimation from "../components/LottieAnimation";
-import VotingLiveModal from "../components/VotingLiveModal";
 import socket from "../socket";
 import { FaChessKing } from "react-icons/fa";
+import VotingLiveModal from "../components/VotingLiveModal";
+import { axiosInstance } from "../store/index";
+
 const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 const token = localStorage.getItem("token");
 
@@ -142,9 +144,7 @@ const Dashboard = () => {
             >
               <div className="w-[50%] flex items-center h-[100%]">
                 <img
-                  src={`${import.meta.env.VITE_APP_BASE_URL}${
-                    candidate?.image
-                  }`}
+                  src={candidate?.image}
                   alt=""
                   className="w-[100px] h-[100px] rounded-[50%]"
                 />
@@ -233,9 +233,7 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={`${import.meta.env.VITE_APP_BASE_URL}${
-                        candidate?.image
-                      }`}
+                      src={candidate?.image}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full"
                     />
@@ -303,6 +301,7 @@ const Dashboard = () => {
             </div>
           </Box>
         </Modal>
+
         <VotingLiveModal open={votingActive} />
       </section>
     </div>

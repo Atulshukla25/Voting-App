@@ -15,15 +15,32 @@ import { FaUserLarge } from "react-icons/fa6";
 import { GrSelection } from "react-icons/gr";
 import { BsDoorOpenFill } from "react-icons/bs";
 import { toast } from "react-toastify";
-const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
+const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 const adminToken = localStorage.getItem("adminToken");
-
-
+import { axiosInstance } from "../store";
 
 const validationSchema = z.object({
-  name: z.string().nonempty("Name is required."),
-  party: z.string().nonempty("Party is required."),
-  department: z.string().nonempty("Department is required."),
+  name: z
+    .string()
+    .nonempty("Candidate  name is required")
+    .min(3, "Candidate name must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Candidate name cannot be only numbers",
+    }),
+  party: z
+    .string()
+    .nonempty("Party is required")
+    .min(3, "Party name must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Party cannot be only numbers",
+    }),
+  department: z
+    .string()
+    .nonempty("Department  name is required")
+    .min(3, "Department name must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Department name cannot be only numbers",
+    }),
   position: z.string().nonempty("Position is required."),
   image: z.any().optional(), // optional for updates
 });
@@ -86,13 +103,14 @@ const UpdateCandidateModal = ({
     }
 
     try {
-      await axios.put(
+      await axiosInstance.put(
         `${API_BASE_URL}/candidates/${candidateData._id}`,
-        formDataToSend, {
+        formDataToSend,
+        {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${adminToken}`,
           },
+          isAdmin: true,
         }
       );
       toast.success("Candidate update successfully");
@@ -123,7 +141,7 @@ const UpdateCandidateModal = ({
           p: 4,
           borderRadius: 2,
         }}
-        className="md:w-[600px] w-[400px]"
+        className="md:w-[600px] w-[350px]"
       >
         <Typography variant="h6" sx={{ mb: 2, color: "#41122e" }}>
           Update Candidate
@@ -227,7 +245,7 @@ const UpdateCandidateModal = ({
                 Current Image:
               </Typography>
               <img
-                src={`${import.meta.env.VITE_APP_BASE_URL}${candidateData.image}`}
+                src={candidateData?.image}
                 alt="Current"
                 style={{
                   width: "100px",

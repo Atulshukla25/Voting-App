@@ -4,12 +4,21 @@ const Candidate = require("../models/Candidate");
 exports.addCandidate = async (req, res) => {
   try {
     const { name, party, department, position } = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
 
-    const candidate = new Candidate({ name, party, department, position, image: imagePath });
+    const candidate = new Candidate({
+      name,
+      party,
+      department,
+      position,
+      image: imageUrl,
+    });
+
     await candidate.save();
 
-    res.status(201).json({ message: "Candidate added successfully", candidate });
+    res
+      .status(201)
+      .json({ message: "Candidate added successfully", candidate });
   } catch (error) {
     res.status(500).json({ message: "Error adding candidate", error });
   }
@@ -25,12 +34,11 @@ exports.getCandidates = async (req, res) => {
   }
 };
 
-
 // Get all candidates (user)
 exports.getPublicCandidates = async (req, res) => {
   try {
     // Exclude 'voteCount' field from the response
-    const candidates = await Candidate.find({}, '-voteCount');
+    const candidates = await Candidate.find({}, "-voteCount");
     res.json({ candidates });
   } catch (error) {
     res.status(500).json({ message: "Error fetching candidates", error });
@@ -54,7 +62,7 @@ exports.getCandidateById = async (req, res) => {
 exports.updateCandidate = async (req, res) => {
   try {
     const { name, party, department, position } = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
 
     const candidate = await Candidate.findById(req.params.id);
     if (!candidate) {
@@ -65,8 +73,9 @@ exports.updateCandidate = async (req, res) => {
     candidate.party = party || candidate.party;
     candidate.department = department || candidate.department;
     candidate.position = position || candidate.position;
-    if (imagePath) {
-      candidate.image = imagePath;
+
+    if (imageUrl) {
+      candidate.image = imageUrl;
     }
 
     await candidate.save();
@@ -96,12 +105,16 @@ exports.getCandidatesByPosition = async (req, res) => {
     const candidates = await Candidate.find({ position });
 
     if (!candidates.length) {
-      return res.status(404).json({ message: "No candidates found for this position" });
+      return res
+        .status(404)
+        .json({ message: "No candidates found for this position" });
     }
 
     res.json({ candidates });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching candidates by position", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching candidates by position", error });
   }
 };
 
@@ -111,15 +124,19 @@ exports.getPublicCandidatesByPosition = async (req, res) => {
     const { position } = req.params;
 
     // Exclude `voteCount` using projection
-    const candidates = await Candidate.find({ position }, '-voteCount');
+    const candidates = await Candidate.find({ position }, "-voteCount");
 
     if (!candidates.length) {
-      return res.status(404).json({ message: "No candidates found for this position" });
+      return res
+        .status(404)
+        .json({ message: "No candidates found for this position" });
     }
 
     res.json({ candidates });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching candidates by position", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching candidates by position", error });
   }
 };
 
@@ -131,7 +148,7 @@ exports.getWinnersByPosition = async (req, res) => {
       "Vice President",
       "General Secretary",
       "Joint Secretary",
-      "Treasurer"
+      "Treasurer",
     ];
 
     const winners = {};
@@ -146,10 +163,10 @@ exports.getWinnersByPosition = async (req, res) => {
       }
 
       // Find the max vote count
-      const maxVotes = Math.max(...candidates.map(c => c.voteCount));
+      const maxVotes = Math.max(...candidates.map((c) => c.voteCount));
 
       // Get all candidates who have the max vote count (tie handling)
-      const topCandidates = candidates.filter(c => c.voteCount === maxVotes);
+      const topCandidates = candidates.filter((c) => c.voteCount === maxVotes);
 
       winners[position] = topCandidates;
     }

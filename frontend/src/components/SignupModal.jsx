@@ -23,8 +23,17 @@ import { useNavigate } from "react-router-dom";
 import LottieAnimation from "./LottieAnimation";
 
 const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters").max(20),
-  rollNumber: z.string().min(1, "Roll Number is required"),
+  username: z
+    .string()
+    .nonempty("Username is required")
+    .min(3, "Username must be at least 3 characters long")
+    .refine((val) => !/^\d+$/.test(val), {
+      message: "Username cannot be only numbers",
+    }),
+  rollNumber: z
+    .string()
+    .nonempty("Roll Number is required")
+    .min(6, "Roll Number must be atleast 6 digit"),
   department: z.string().min(1, "Department is required"),
   branch: z.string().min(1, "Branch is required"),
   gender: z.string().min(1, "Gender is required"),
@@ -32,7 +41,8 @@ const signupSchema = z.object({
 });
 
 const SignupModal = ({ open, onClose }) => {
-  const { departments, branches, fetchDepartments, fetchBranchs, signup } = useStore();
+  const { departments, branches, fetchDepartments, fetchBranchs, signup } =
+    useStore();
   const navigate = useNavigate();
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [voterId, setVoterId] = useState("");
@@ -105,7 +115,10 @@ const SignupModal = ({ open, onClose }) => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-4"
             >
-              <Box sx={{ display: "flex", flexDirection: "column" }} className="gap-y-5">
+              <Box
+                sx={{ display: "flex", flexDirection: "column" }}
+                className="gap-y-5"
+              >
                 <div className="flex items-end gap-x-3">
                   <FaUserAlt className="text-md text-[#41122e]" />
                   <TextField
