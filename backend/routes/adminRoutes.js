@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid Admin ID or Password" });
 
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_ADMIN_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: admin._id }, process.env.JWT_ADMIN_SECRET, { expiresIn: "24h" });
 
     res.json({ token ,admin:admin.adminID});
   } catch (error) {
